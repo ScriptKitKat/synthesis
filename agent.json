@@ -1,0 +1,25 @@
+{
+  "name": "Signal Scout",
+  "version": "1.0.0",
+  "alias": "Cleo",
+  "description": "Autonomous crypto research analyst that pays for its own API calls via Locus",
+  "hackathon": "The Synthesis",
+  "track": "Best use of Locus",
+  "project_theme": "Agents that Pay",
+  "wallet_address": "0x063d6623e61de8e02ddb0ea75c26ae2282b98fa9",
+  "owner_address": "0x55A744AFDee48F754F1F4014C626dD3a8A2bFA24",
+  "chain": "base",
+  "capabilities": [
+    "crypto research",
+    "semantic search via Exa",
+    "web scraping via Firecrawl",
+    "autonomous USDC spending",
+    "budget-aware decision making",
+    "on-chain report verification"
+  ],
+  "locus": {
+    "api_base": "https://beta-api.paywithlocus.com/api",
+    "wrapped_providers": ["exa", "firecrawl"],
+    "default_budget_usdc": 0.50
+  }
+}
