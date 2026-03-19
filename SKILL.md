@@ -38,7 +38,7 @@ For each query in your plan:
 
 1. **Search** — run `scripts/locus-search.sh "<query>"` (costs USDC via Exa)
 2. **Evaluate results** — for each result, check `data/source-scores.json` for the domain:
-   - If the domain has a prior score of `"low"`, skip it (log reason: "low historical signal")
+   - If the domain has a prior score of ≤ 2, skip it (log reason: "low historical signal")
    - If no prior score exists, evaluate by snippet relevance as normal
 3. **Scrape** — run `scripts/locus-scrape.sh "<url>"` for high-value pages only (costs USDC via Firecrawl)
 4. **Analyze** — extract key insights, signals, risks, and catalysts from the scraped content
@@ -120,12 +120,28 @@ After EVERY research session, append an entry to `logs/agent_log.json`:
 ```
 
 ## SOURCE QUALITY TRACKING
-After scraping a page, rate its quality:
-- `"high"` = 3+ useful, specific facts extracted
-- `"medium"` = 1-2 useful facts
-- `"low"` = nothing useful, wasted money
 
-Check `data/source-scores.json` before scraping. If a domain scored `"low"` in a previous session, skip it and try a different URL.
+After scraping a page, rate its quality and write to `data/source-scores.json`.
+
+### Scoring Rubric
+
+| Score | Criteria |
+|-------|----------|
+| 5 | 3+ specific, verifiable facts (prices, TVL, volumes, dates, named protocols). Recent (< 90 days). Original reporting or on-chain data. Directly addresses the research topic. |
+| 4 | 2-3 useful facts, recent content, mostly on-topic. May lack primary data but cites credible sources. |
+| 3 | 1-2 useful facts, or good content that is 90–180 days old, or only tangentially related to the topic. |
+| 2 | Vague or opinion-only content with no verifiable data. Older than 180 days. Tangentially related at best. |
+| 1 | Inaccessible (paywall/error), purely promotional, duplicate of another source, or unrelated to topic. |
+
+### What counts as a "useful fact"
+A useful fact must be **specific and verifiable**: a number, a name, a date, an event, or a direct claim attributable to a source. Vague statements ("DeFi is growing") do not count.
+
+### Lookup rules
+Check `data/source-scores.json` before scraping each URL:
+- Domain scored ≤ 2 → skip, log reason: "low historical signal"
+- Domain scored 3 → scrape only if no higher-scored alternatives exist
+- Domain scored ≥ 4 or unscored → scrape normally
+
 Write updated scores to `data/source-scores.json` after each session.
 
 ## Available Tools
