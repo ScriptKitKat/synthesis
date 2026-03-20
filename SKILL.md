@@ -43,15 +43,16 @@ The customer's payment funds the research session. Signal Scout is authorized to
 
 For each research cycle:
 
-1. **Get live price** — run `scripts/locus-crypto-data.sh price <TOKEN>` for the primary token (costs ~$0.008 via Alpha Vantage)
-2. **Get sentiment** — run `scripts/locus-crypto-data.sh sentiment blockchain` (costs ~$0.008 via Alpha Vantage)
-3. **Search** — run `scripts/locus-search.sh "<query>"` (costs ~$0.007 via Exa)
-4. **Evaluate results** — decide which URLs are worth scraping based on title/snippet relevance
-5. **Scrape** — run `scripts/locus-scrape.sh "<url>"` for high-value pages only (costs ~$0.010 via Firecrawl)
-6. **Analyze** — synthesize live price data, sentiment, and scraped articles into key signals
-7. **Track spend** — update `data/budget.json` after each paid call
-8. **Log decisions** — append to `logs/agent_log.json` (action, cost, rationale)
-9. **Stop** when budget is 90% spent or you have enough signal for a solid report
+1. **Get live price** — run `scripts/locus-crypto-data.sh price <TOKEN>` for the primary token (~$0.008 via Alpha Vantage)
+2. **Get news sentiment** — run `scripts/locus-crypto-data.sh sentiment blockchain` (~$0.008 via Alpha Vantage)
+3. **Get X/Twitter sentiment** — run `scripts/locus-grok-xsearch.sh "<topic>"` (~$0.01–$0.50 via Grok + X search) — social signals that news APIs miss
+4. **AI-synthesized research** — run `scripts/locus-perplexity.sh "<question>" day` (~$0.005–$0.02 via Perplexity Sonar) — web search + synthesis in one call
+5. **Deep search** (if budget allows) — run `scripts/locus-search.sh "<query>"` (~$0.007 via Exa) for additional sources
+6. **Scrape** (if budget allows) — run `scripts/locus-scrape.sh "<url>"` for highest-value pages only (~$0.010 via Firecrawl)
+7. **Analyze** — synthesize price data, news sentiment, X sentiment, and Perplexity synthesis into key signals
+8. **Track spend** — update `data/budget.json` after each paid call
+9. **Log decisions** — append to `logs/agent_log.json` (action, cost, rationale)
+10. **Stop** when budget is 90% spent or you have enough signal for a solid report
 
 ### 3. Source Scoring
 
@@ -142,6 +143,8 @@ Write updated scores to `data/source-scores.json` after each session.
 - `./scripts/locus-search.sh "<query>" [num_results]` — Semantic search via Exa. Costs ~$0.01 per call. Default 5 results.
 - `./scripts/locus-scrape.sh "<url>"` — Scrape a full page via Firecrawl. Costs ~$0.01 per call. Returns markdown.
 - `./scripts/locus-transactions.sh [limit] [status]` — View recent Locus transactions (free). Default limit 20.
+- `./scripts/locus-perplexity.sh "<question>" [recency]` — AI-synthesized web research via Perplexity Sonar. Searches the web AND synthesizes an answer with citations. Costs ~$0.005–$0.02. Recency: `hour`, `day`, `week`, `month`.
+- `./scripts/locus-grok-xsearch.sh "<topic>"` — Live X/Twitter sentiment via Grok with real-time X search. Surfaces social signals that news APIs miss. Costs ~$0.01–$0.50.
 - `./scripts/locus-crypto-data.sh price <SYMBOL>` — Realtime crypto price via Alpha Vantage. Costs ~$0.008. E.g. `SOL`, `BTC`, `ETH`.
 - `./scripts/locus-crypto-data.sh sentiment <TOPICS>` — Crypto news sentiment via Alpha Vantage. Costs ~$0.008. E.g. `blockchain,financial_markets`.
 - `./scripts/locus-crypto-data.sh daily <SYMBOL>` — Daily OHLCV price history via Alpha Vantage. Costs ~$0.008.
