@@ -1,0 +1,12 @@
+{
+  "services": {
+    "web": {
+      "port": 8080,
+      "healthCheck": "/",
+      "build": {
+        "method": "dockerfile",
+        "dockerfile": "Dockerfile"
+      }
+    }
+  }
+}
