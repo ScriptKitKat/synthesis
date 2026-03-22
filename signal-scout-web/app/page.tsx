@@ -71,70 +71,8 @@ export default function Home() {
         </p>
       </section>
 
-      {/* ═══════════════ PHONE MOCKUP + STATS ═══════════════ */}
+      {/* ═══════════════ STATS ═══════════════ */}
       <section className="py-16 px-6 flex flex-col items-center">
-        {/* Phone mockup */}
-        <div className="relative w-[280px] h-[560px] bg-scout-surface rounded-[40px] border-2 border-scout-border phone-shadow p-3">
-          <div className="w-full h-full bg-scout-bg rounded-[32px] overflow-hidden p-5 flex flex-col">
-            {/* Mockup header */}
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-[10px] font-mono text-scout-muted">SIGNAL SCOUT</span>
-              <div className="flex gap-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-scout-accent" />
-                <div className="w-1.5 h-1.5 rounded-full bg-scout-accent/40" />
-              </div>
-            </div>
-
-            {/* Research Score */}
-            <div className="text-center mb-6">
-              <span className="text-[10px] font-mono text-scout-muted block mb-2">Research Score</span>
-              <div className="relative w-28 h-28 mx-auto">
-                <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-                  <circle cx="60" cy="60" r="52" fill="none" stroke="#222" strokeWidth="6" />
-                  <circle
-                    cx="60" cy="60" r="52" fill="none"
-                    stroke="#c8ff00" strokeWidth="6"
-                    strokeDasharray="326.7"
-                    strokeDashoffset="81.7"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span className="absolute inset-0 flex items-center justify-center text-3xl font-black">
-                  75
-                </span>
-              </div>
-            </div>
-
-            {/* Mini stats */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-scout-surface rounded-xl p-3">
-                <span className="text-[9px] font-mono text-scout-muted block">Sources</span>
-                <span className="text-lg font-bold">233</span>
-              </div>
-              <div className="bg-scout-surface rounded-xl p-3">
-                <span className="text-[9px] font-mono text-scout-muted block">Spent</span>
-                <span className="text-lg font-bold">$0.58</span>
-              </div>
-            </div>
-
-            {/* Mini bar chart */}
-            <div className="flex items-end gap-1 h-16 mt-auto px-2">
-              {[40, 65, 30, 80, 55, 90, 45, 70, 35, 85, 60, 50, 75, 40, 95, 55].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-sm bg-scout-accent/70"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-
-            <div className="flex justify-between mt-2 text-[9px] font-mono text-scout-muted">
-              <span>10:58</span>
-              <span>$1.80</span>
-            </div>
-          </div>
-        </div>
-
         {/* Flowing connector lines */}
         <div className="my-12 flow-line">
           <svg width="300" height="120" viewBox="0 0 300 120" fill="none" className="mx-auto">
@@ -325,49 +263,6 @@ export default function Home() {
               <path d="M8 1l7 7-7 7M1 8h14" stroke="currentColor" strokeWidth="2" fill="none" />
             </svg>
           </a>
-        </div>
-      </section>
-
-      {/* ═══════════════ BOTTOM PHONE MOCKUPS ═══════════════ */}
-      <section className="py-16 px-6">
-        <div className="flex justify-center gap-6 md:gap-10">
-          {/* Phone 1 — Dashboard view */}
-          <div className="w-[200px] md:w-[260px] h-[400px] md:h-[520px] bg-scout-surface rounded-[32px] border border-scout-border phone-shadow p-2.5 rotate-[-4deg]">
-            <div className="w-full h-full bg-scout-bg rounded-[26px] overflow-hidden p-4 flex flex-col">
-              <span className="text-[8px] font-mono text-scout-muted mb-3">DASHBOARD</span>
-              <div className="flex items-end gap-0.5 h-20 mb-4">
-                {[45, 70, 35, 85, 60, 90, 40, 75, 50, 80, 65, 95].map((h, i) => (
-                  <div key={i} className="flex-1 rounded-sm bg-scout-accent/60" style={{ height: `${h}%` }} />
-                ))}
-              </div>
-              <div className="space-y-2 mt-auto">
-                <div className="h-2 bg-scout-surface rounded w-3/4" />
-                <div className="h-2 bg-scout-surface rounded w-1/2" />
-                <div className="h-2 bg-scout-accent/20 rounded w-full" />
-              </div>
-            </div>
-          </div>
-
-          {/* Phone 2 — Report view */}
-          <div className="w-[200px] md:w-[260px] h-[400px] md:h-[520px] bg-scout-surface rounded-[32px] border border-scout-border phone-shadow p-2.5 rotate-[4deg]">
-            <div className="w-full h-full bg-scout-bg rounded-[26px] overflow-hidden p-4 flex flex-col">
-              <span className="text-[8px] font-mono text-scout-muted mb-3">RESEARCH REPORT</span>
-              <div className="text-scout-accent text-[10px] font-mono mb-2">■ DeFi Analysis</div>
-              <div className="space-y-1.5 flex-1">
-                <div className="h-1.5 bg-scout-surface rounded w-full" />
-                <div className="h-1.5 bg-scout-surface rounded w-5/6" />
-                <div className="h-1.5 bg-scout-surface rounded w-4/6" />
-                <div className="h-1.5 bg-scout-surface rounded w-full" />
-                <div className="h-1.5 bg-scout-surface rounded w-3/4" />
-                <div className="h-1.5 bg-scout-accent/20 rounded w-2/3" />
-                <div className="h-1.5 bg-scout-surface rounded w-full" />
-                <div className="h-1.5 bg-scout-surface rounded w-5/6" />
-              </div>
-              <div className="mt-auto pt-3 border-t border-scout-border">
-                <span className="text-[8px] font-mono text-scout-muted">Sources: 42 · Cost: $0.38</span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
