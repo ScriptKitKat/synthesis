@@ -9,13 +9,13 @@ const config: Config = {
     extend: {
       colors: {
         scout: {
-          bg: "#0a0b0f",
-          surface: "#12141c",
-          border: "#1e2130",
-          accent: "#00e5a0",
-          "accent-dim": "#00e5a020",
-          text: "#e4e6ef",
-          muted: "#6b7094",
+          bg: "#0a0a0a",
+          surface: "#141414",
+          border: "#222222",
+          accent: "#c8ff00",
+          "accent-dim": "#c8ff0015",
+          text: "#f0f0f0",
+          muted: "#888888",
           danger: "#ff4d6a",
           warning: "#ffb224",
         },
