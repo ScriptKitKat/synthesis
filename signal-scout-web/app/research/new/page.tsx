@@ -49,7 +49,7 @@ export default function NewResearch() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-12">
+    <div className="max-w-2xl mx-auto px-6 pt-28 pb-12">
       <h1 className="text-3xl font-bold mb-2">New Research</h1>
       <p className="text-scout-muted mb-10">
         Choose a topic and budget. The agent will search, scrape, and analyze —
