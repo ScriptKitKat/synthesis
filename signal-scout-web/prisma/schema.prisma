@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  sessions  Research[]
+  createdAt DateTime   @default(now())
+}
+
+model Research {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  topic       String
+  budget      Float
+  status      String    @default("pending")
+  briefing    String?
+  spent       Float?
+  sources     String?
+  txHash      String?
+  chainTxHash String?
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+}

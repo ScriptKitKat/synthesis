@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+
+:root {
+  --scout-bg: #0a0b0f;
+  --scout-surface: #12141c;
+  --scout-border: #1e2130;
+  --scout-accent: #00e5a0;
+  --scout-text: #e4e6ef;
+  --scout-muted: #6b7094;
+}
+
+body {
+  background: var(--scout-bg);
+  color: var(--scout-text);
+}
+
+/* Glowing accent effects */
+.glow-accent {
+  box-shadow: 0 0 20px rgba(0, 229, 160, 0.15), 0 0 60px rgba(0, 229, 160, 0.05);
+}
+
+.glow-text {
+  text-shadow: 0 0 20px rgba(0, 229, 160, 0.3);
+}
+
+/* Status badges */
+.status-pending { color: #ffb224; }
+.status-running { color: #3b82f6; }
+.status-complete { color: #00e5a0; }
+.status-failed { color: #ff4d6a; }
+
+/* Terminal-style briefing */
+.briefing-content {
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.7;
+  font-size: 0.875rem;
+}
+
+.briefing-content h1,
+.briefing-content h2,
+.briefing-content h3 {
+  color: var(--scout-accent);
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.briefing-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.briefing-content ul li::before {
+  content: "▸ ";
+  color: var(--scout-accent);
+}
+
+.briefing-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.briefing-content th,
+.briefing-content td {
+  border: 1px solid var(--scout-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.briefing-content th {
+  background: var(--scout-surface);
+  color: var(--scout-accent);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scout-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scout-border);
+  border-radius: 3px;
+}
