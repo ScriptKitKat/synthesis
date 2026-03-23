@@ -1,43 +1,96 @@
-import Database from "better-sqlite3";
-import { PrismaClient } from "@prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { randomUUID } from "crypto";
 
-const DB_PATH = "/tmp/dev.db";
+type User = {
+  id: string;
+  email: string;
+  name: string | null;
+  createdAt: Date;
+};
 
-function ensureSchema() {
-  const db = new Database(DB_PATH);
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS "User" (
-      "id"        TEXT     NOT NULL PRIMARY KEY,
-      "email"     TEXT     NOT NULL UNIQUE,
-      "name"      TEXT,
-      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-    CREATE TABLE IF NOT EXISTS "Research" (
-      "id"          TEXT     NOT NULL PRIMARY KEY,
-      "userId"      TEXT     NOT NULL,
-      "topic"       TEXT     NOT NULL,
-      "budget"      REAL     NOT NULL,
-      "status"      TEXT     NOT NULL DEFAULT 'pending',
-      "briefing"    TEXT,
-      "spent"       REAL,
-      "sources"     TEXT,
-      "txHash"      TEXT,
-      "chainTxHash" TEXT,
-      "createdAt"   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      "completedAt" DATETIME,
-      FOREIGN KEY ("userId") REFERENCES "User" ("id")
-    );
-  `);
-  db.close();
+type Research = {
+  id: string;
+  userId: string;
+  topic: string;
+  budget: number;
+  status: string;
+  briefing: string | null;
+  spent: number | null;
+  sources: string | null;
+  txHash: string | null;
+  chainTxHash: string | null;
+  createdAt: Date;
+  completedAt: Date | null;
+};
+
+const users: User[] = [];
+const researches: Research[] = [];
+
+function sortBy<T>(arr: T[], key: keyof T, dir: "asc" | "desc"): T[] {
+  return [...arr].sort((a, b) => {
+    const av = a[key] as unknown as number;
+    const bv = b[key] as unknown as number;
+    return dir === "asc" ? (av > bv ? 1 : -1) : av < bv ? 1 : -1;
+  });
 }
 
-ensureSchema();
+export const prisma = {
+  research: {
+    findMany({ orderBy, include }: { orderBy?: Record<string, "asc" | "desc">; include?: { user?: boolean } } = {}) {
+      let results = [...researches];
+      if (orderBy) {
+        const [key, dir] = Object.entries(orderBy)[0] as [keyof Research, "asc" | "desc"];
+        results = sortBy(results, key, dir);
+      }
+      if (include?.user) {
+        return results.map((r) => ({ ...r, user: users.find((u) => u.id === r.userId) ?? null }));
+      }
+      return results;
+    },
 
-const adapter = new PrismaBetterSqlite3({ url: DB_PATH });
+    create({ data }: { data: {
+      topic: string;
+      budget: number;
+      status?: string;
+      userId?: string;
+      user?: { connectOrCreate: { where: { email: string }; create: { email: string; name?: string } } };
+    } }) {
+      let userId = data.userId ?? "";
+      if (data.user?.connectOrCreate) {
+        const { where, create } = data.user.connectOrCreate;
+        let user = users.find((u) => u.email === where.email);
+        if (!user) {
+          user = { id: randomUUID(), email: create.email, name: create.name ?? null, createdAt: new Date() };
+          users.push(user);
+        }
+        userId = user.id;
+      }
+      const record: Research = {
+        id: randomUUID(),
+        userId,
+        topic: data.topic,
+        budget: data.budget,
+        status: data.status ?? "pending",
+        briefing: null,
+        spent: null,
+        sources: null,
+        txHash: null,
+        chainTxHash: null,
+        createdAt: new Date(),
+        completedAt: null,
+      };
+      researches.push(record);
+      return record;
+    },
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+    findUnique({ where }: { where: { id: string } }) {
+      return researches.find((r) => r.id === where.id) ?? null;
+    },
 
-export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+    update({ where, data }: { where: { id: string }; data: Partial<Research> }) {
+      const idx = researches.findIndex((r) => r.id === where.id);
+      if (idx === -1) throw new Error(`Research ${where.id} not found`);
+      researches[idx] = { ...researches[idx], ...data };
+      return researches[idx];
+    },
+  },
+};
