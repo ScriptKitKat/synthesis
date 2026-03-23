@@ -70,9 +70,13 @@ After each scrape, update `data/source-scores.json`:
 - Score sources 1–5 on signal quality
 - Prefer high-scoring sources in future sessions
 
-### 5. Deliver Report
+### 4.5. Faithfulness Check
 
-Output a structured briefing:
+Before delivering, run the faithfulness checker to verify the report is grounded in retrieved evidence.
+
+#### Step 1 — Write the draft report to `/tmp/signal-scout-draft.md`
+
+Use exactly this format (do NOT include a `**Faithfulness:**` line — the script adds it):
 
 ```
 ## Signal Scout Report: <topic>
@@ -101,6 +105,39 @@ Output a structured briefing:
 | search | $X.XX | "<query>" |
 | scrape | $X.XX | <url> |
 ```
+
+#### Step 2 — Write the evidence block to `/tmp/signal-scout-evidence.txt`
+
+Concatenate the raw text output from every source used during research — paste it in as-is, separated by blank lines:
+- Perplexity full response + citation URLs
+- Grok/X search output
+- Alpha Vantage price and sentiment responses
+- Exa search snippets
+- Scraped page content (markdown)
+
+Do not summarize or paraphrase. The script truncates to ~3000 chars automatically.
+
+#### Step 3 — Run the checker
+
+```bash
+python3 scripts/check-faithfulness.py /tmp/signal-scout-draft.md /tmp/signal-scout-evidence.txt
+```
+
+The script verifies each bullet in Key Signals and Risks against the evidence via stateless LLM calls (temperature=0, no research context). It writes the annotated final report to both stdout and `/tmp/signal-scout-final.md`.
+
+#### Step 4 — Act on the exit code
+
+- `0` (Faithful, ≥ 70% verified) — **ALLOW**: deliver `/tmp/signal-scout-final.md` verbatim
+- `1` (Partially Faithful, 50–69%) — **WARN**: deliver `/tmp/signal-scout-final.md` verbatim (warning banner already included)
+- `2` (Unfaithful, < 50%) — **BLOCK**: do not deliver; re-run targeted research for the unverified claims printed to stderr, then re-run this step from the top
+
+#### Step 5 — Log faithfulness metadata
+
+Parse the `---FAITHFULNESS_JSON---` block from stderr and add it to the session entry in `logs/agent_log.json` (see LOGGING section).
+
+### 5. Deliver Report
+
+Deliver the contents of `/tmp/signal-scout-final.md` verbatim. Do not re-generate or paraphrase the report — the faithfulness checker has already annotated it with `[UNVERIFIED]` markers and the `**Faithfulness:**` header line. Output it exactly as written.
 
 ## Budget Rules
 
@@ -133,7 +170,15 @@ After EVERY research session, append an entry to `logs/agent_log.json`:
     }
   ],
   "sources_used": [number],
-  "insights_extracted": [number]
+  "insights_extracted": [number],
+  "faithfulness": {
+    "verified": [number],
+    "total": [number],
+    "ratio": [number],
+    "classification": "Faithful | Partially Faithful | Unfaithful",
+    "action": "ALLOW | WARN | BLOCK",
+    "unverified_claims": ["[claim text]"]
+  }
 }
 ```
 
@@ -158,6 +203,7 @@ Write updated scores to `data/source-scores.json` after each session.
 - `./scripts/locus-crypto-data.sh price <SYMBOL>` — Realtime crypto price via Alpha Vantage. Costs ~$0.008. E.g. `SOL`, `BTC`, `ETH`.
 - `./scripts/locus-crypto-data.sh sentiment <TOPICS>` — Crypto news sentiment via Alpha Vantage. Costs ~$0.008. E.g. `blockchain,financial_markets`.
 - `./scripts/locus-crypto-data.sh daily <SYMBOL>` — Daily OHLCV price history via Alpha Vantage. Costs ~$0.008.
+- `python3 scripts/check-faithfulness.py <report_file> <evidence_file>` — RAG faithfulness checker. Verifies each factual claim in the report against the evidence via stateless OpenClaw gateway calls (temperature=0, no prior context). Outputs annotated report to stdout; faithfulness metadata JSON to stderr. Exit 0=Faithful, 1=Partially Faithful, 2=Unfaithful. **Run this before every delivery.**
 
 ### When to Use Crypto Data Tools
 Use `locus-crypto-data.sh` **before scraping** to ground the briefing in hard numbers:
@@ -210,3 +256,4 @@ ALWAYS log after delivering a briefing. Report the tx hash to the human.
 | `scripts/locus-search.sh` | Semantic search via Exa |
 | `scripts/locus-scrape.sh` | Full-page scrape via Firecrawl |
 | `scripts/locus-transactions.sh` | Transaction history |
+| `scripts/check-faithfulness.py` | RAG faithfulness checker (run before every delivery) |
