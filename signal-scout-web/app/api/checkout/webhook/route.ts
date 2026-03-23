@@ -40,20 +40,34 @@ export async function POST(req: NextRequest) {
       const txHash = sessionData.paymentTxHash;
 
       if (researchId) {
-        await prisma.research.update({
+        const session = await prisma.research.update({
           where: { id: researchId },
           data: {
             status: "running",
             txHash: txHash || null,
           },
         });
+
         console.log(`Research ${researchId} → running. TX: ${txHash}`);
+
+        // Trigger the OpenClaw agent to start research
+        try {
+          await fetch(`${process.env.OPENCLAW_HOOK_URL}/hooks/agent`, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.OPENCLAW_HOOK_TOKEN}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              message: `New paid research request.\n\nTopic: "${session.topic}"\nBudget: $${session.budget}\nSession ID: ${session.id}\n\nRun your research workflow. When complete, POST results to ${process.env.NEXT_PUBLIC_APP_URL}/api/research/complete with the session ID.`,
+              name: "WebApp",
+              deliver: true,
+              channel: "discord",
+            }),
+          });
+          console.log(`Triggered agent for research ${researchId}`);
+        } catch (hookErr) {
+          console.error("Failed to trigger agent:", hookErr);
+        }
       }
     }
-
-    return Response.json({ received: true });
-  } catch (error) {
-    console.error("Webhook error:", error);
-    return Response.json({ error: "Webhook processing failed" }, { status: 500 });
-  }
-}
