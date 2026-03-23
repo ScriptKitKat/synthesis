@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap');
+
+:root {
+  --scout-bg: #0a0a0a;
+  --scout-surface: #141414;
+  --scout-border: #222222;
+  --scout-accent: #c8ff00;
+  --scout-text: #f0f0f0;
+  --scout-muted: #888888;
+}
+
+body {
+  background: var(--scout-bg);
+  color: var(--scout-text);
+}
+
+/* Glowing accent effects */
+.glow-accent {
+  box-shadow: 0 0 30px rgba(200, 255, 0, 0.2), 0 0 80px rgba(200, 255, 0, 0.08);
+}
+
+.glow-text {
+  text-shadow: 0 0 30px rgba(200, 255, 0, 0.4);
+}
+
+/* Status badges */
+.status-pending { color: #ffb224; }
+.status-running { color: #3b82f6; }
+.status-complete { color: #c8ff00; }
+.status-failed { color: #ff4d6a; }
+
+/* Terminal-style briefing */
+.briefing-content {
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.7;
+  font-size: 0.875rem;
+}
+
+.briefing-content h1,
+.briefing-content h2,
+.briefing-content h3 {
+  color: var(--scout-accent);
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.briefing-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.briefing-content ul li::before {
+  content: "▸ ";
+  color: var(--scout-accent);
+}
+
+.briefing-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.briefing-content th,
+.briefing-content td {
+  border: 1px solid var(--scout-border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.briefing-content th {
+  background: var(--scout-surface);
+  color: var(--scout-accent);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scout-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scout-border);
+  border-radius: 3px;
+}
+
+/* Hero gradient overlay */
+.hero-gradient {
+  background: linear-gradient(180deg, #c8ff0040 0%, #c8ff0015 40%, transparent 70%);
+}
+
+/* Flowing line animation */
+@keyframes flowPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.flow-line {
+  animation: flowPulse 3s ease-in-out infinite;
+}
+
+/* Bar chart animation */
+@keyframes barGrow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+.bar-animate {
+  animation: barGrow 1s ease-out forwards;
+  transform-origin: bottom;
+}
+
+/* Phone mockup shadow */
+.phone-shadow {
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(200, 255, 0, 0.05);
+}
+
+/* Section label styling */
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--scout-muted);
+}
+
+/* Italic display heading */
+.display-heading {
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
