@@ -2,7 +2,7 @@
 
 > Your autonomous crypto research analyst — powered by AI and real USDC payments.
 
-**Hackathon:** The Synthesis · **Track:** Best use of Locus · **Theme:** Agents that Pay
+**Hackathon:** The Synthesis · **Track:** Best use of Locus, Status Network, College.xyz · **Theme:** Agents that Pay
 
 ---
 
