@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               content: [
-                `📡 **RESEARCH REQUEST**`,
+                `**RESEARCH REQUEST**`,
                 ``,
                 `**Session ID:** ${session.id}`,
                 `**Topic:** "${session.topic}"`,
