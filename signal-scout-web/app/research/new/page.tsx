@@ -56,7 +56,15 @@ export default function NewResearch() {
 
   function handlePaymentSuccess(data: { txHash: string; amount: string }) {
     setStep("paid");
-    // Give the webhook a moment to fire, then redirect to the session page
+
+    // Trigger the agent now that payment is confirmed
+    fetch("/api/research/trigger", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: researchId, topic, budget }),
+    });
+
+    // Redirect to session page
     setTimeout(() => {
       if (researchId) router.push(`/research/${researchId}`);
     }, 2000);

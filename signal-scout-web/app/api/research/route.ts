@@ -32,25 +32,6 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Trigger agent via Discord immediately
-  await fetch(process.env.DISCORD_WEBHOOK_URL!, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: [
-        `**RESEARCH REQUEST**`,
-        ``,
-        `**Session ID:** ${session.id}`,
-        `**Topic:** "${session.topic}"`,
-        `**Budget:** $${session.budget}`,
-        ``,
-        `Run your research workflow for this topic.`,
-        `When complete, post results using:`,
-        `node ~/signal-scout-scripts/post-to-web.js "${session.id}" "BRIEFING_TEXT" SPENT_AMOUNT`,
-      ].join("\n"),
-    }),
-  });
-
   // Still create checkout for payment (but don't block on it)
   const checkoutRes = await fetch(
     "https://beta-api.paywithlocus.com/api/checkout/sessions",
