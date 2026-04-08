@@ -245,6 +245,27 @@ node ~/skills/signal-scout/scripts/log-to-chain.js "Solana DeFi" "$HASH" 17
 
 ALWAYS log after delivering a briefing. Report the tx hash to the human.
 
+## WEB APP REQUESTS
+
+When you see a Discord message starting with "**RESEARCH REQUEST**",
+this is a paid request from the web dashboard.
+
+Extract from the message:
+- Session ID (UUID after "Session ID:")
+- Topic (in quotes after "Topic:")
+- Budget (after "Budget:")
+
+Run your normal research workflow with that topic and budget.
+
+When complete, post results back to the web dashboard:
+
+node ~/signal-scout-scripts/post-to-web.js "SESSION_ID" "FULL BRIEFING TEXT" SPENT_AMOUNT
+
+Example:
+node ~/signal-scout-scripts/post-to-web.js "cm5abc123def" "📡 Signal Scout Report..." 0.017
+
+ALWAYS post results back for web requests. The user is waiting on the dashboard.
+
 ## Files
 
 | File | Purpose |

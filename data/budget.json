@@ -1,8 +1,13 @@
 {
-  "session_id": null,
-  "topic": null,
-  "budget_usdc": 0.00,
-  "spent_usdc": 0.00,
-  "remaining_usdc": 0.00,
-  "calls": []
+  "session_id": "solana-defi-2026-03-23",
+  "topic": "Solana DeFi",
+  "budget_usdc": 0.10,
+  "spent_usdc": 0.021,
+  "remaining_usdc": 0.079,
+  "calls": [
+    {"action": "search", "cost": 0.007, "description": "Solana DeFi 2026 trends TVL protocols"},
+    {"action": "search", "cost": 0.007, "description": "Solana DeFi risks catalysts Jupiter Raydium 2026"},
+    {"action": "scrape", "cost": 0.007, "description": "solana.com/news/state-of-solana-february-2026"},
+    {"action": "scrape", "cost": 0.000, "description": "dextools.io roundup — failed, no charge"}
+  ]
 }

@@ -1,7 +1,8 @@
+// api/research/route.ts — FIXED
+
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
-// GET /api/research — list all sessions
 export async function GET() {
   const sessions = await prisma.research.findMany({
     orderBy: { createdAt: "desc" },
@@ -9,12 +10,15 @@ export async function GET() {
   return Response.json(sessions);
 }
 
-// runs a research session with the POST handler
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { topic, budget } = body;
 
-  // Create research session in DB (status: pending)
+  if (!topic || !budget) {
+    return Response.json({ error: "topic and budget required" }, { status: 400 });
+  }
+
+  // Create session as "pending" (not "running" — payment hasn't happened yet)
   const session = await prisma.research.create({
     data: {
       topic,

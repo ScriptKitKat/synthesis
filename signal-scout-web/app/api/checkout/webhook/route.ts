@@ -40,6 +40,8 @@ export async function POST(req: NextRequest) {
       const txHash = sessionData.paymentTxHash;
 
       if (researchId) {
+
+                // ... after verifying payment and updating status to "running":
         const session = await prisma.research.update({
           where: { id: researchId },
           data: {
@@ -52,20 +54,26 @@ export async function POST(req: NextRequest) {
 
         // Trigger the OpenClaw agent to start research
         try {
-          await fetch(`${process.env.OPENCLAW_HOOK_URL}/hooks/agent`, {
+          await fetch(process.env.DISCORD_WEBHOOK_URL!, {
             method: "POST",
-            headers: {
-              Authorization: `Bearer ${process.env.OPENCLAW_HOOK_TOKEN}`,
-              "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              message: `New paid research request.\n\nTopic: "${session.topic}"\nBudget: $${session.budget}\nSession ID: ${session.id}\n\nRun your research workflow. When complete, POST results to ${process.env.NEXT_PUBLIC_APP_URL}/api/research/complete with the session ID.`,
-              name: "WebApp",
-              deliver: true,
-              channel: "discord",
+              content: [
+                `📡 **RESEARCH REQUEST**`,
+                ``,
+                `**Session ID:** ${session.id}`,
+                `**Topic:** "${session.topic}"`,
+                `**Budget:** $${session.budget}`,
+                ``,
+                `Run your research workflow for this topic.`,
+                `When complete, post results using:`,
+                `node ~/signal-scout-scripts/post-to-web.js "${session.id}" "BRIEFING_TEXT" SPENT_AMOUNT`,
+              ].join("\n"),
             }),
           });
           console.log(`Triggered agent for research ${researchId}`);
+
+          // api/checkout/webhook/route.ts
         } catch (hookErr) {
           console.error("Failed to trigger agent:", hookErr);
         }
