@@ -18,12 +18,11 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "topic and budget required" }, { status: 400 });
   }
 
-  // Create session as "pending" (not "running" — payment hasn't happened yet)
   const session = await prisma.research.create({
     data: {
       topic,
       budget: parseFloat(budget),
-      status: "pending",
+      status: "running",  // Start immediately
       user: {
         connectOrCreate: {
           where: { email: "demo@signalscout.xyz" },
@@ -33,7 +32,26 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Create Locus checkout session
+  // Trigger agent via Discord immediately
+  await fetch(process.env.DISCORD_WEBHOOK_URL!, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content: [
+        `**RESEARCH REQUEST**`,
+        ``,
+        `**Session ID:** ${session.id}`,
+        `**Topic:** "${session.topic}"`,
+        `**Budget:** $${session.budget}`,
+        ``,
+        `Run your research workflow for this topic.`,
+        `When complete, post results using:`,
+        `node ~/signal-scout-scripts/post-to-web.js "${session.id}" "BRIEFING_TEXT" SPENT_AMOUNT`,
+      ].join("\n"),
+    }),
+  });
+
+  // Still create checkout for payment (but don't block on it)
   const checkoutRes = await fetch(
     "https://beta-api.paywithlocus.com/api/checkout/sessions",
     {
@@ -46,7 +64,6 @@ export async function POST(req: NextRequest) {
         amount: budget.toString(),
         description: `Signal Scout Research: ${topic}`,
         metadata: { researchId: session.id },
-        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/checkout/webhook`,
       }),
     }
   );
