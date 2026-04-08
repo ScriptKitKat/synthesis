@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: parseFloat(budget),
+        amount: budget.toString(),
         description: `Signal Scout Research: ${topic}`,
         metadata: { researchId: session.id },
         webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/checkout/webhook`,
