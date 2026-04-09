@@ -259,10 +259,10 @@ Run your normal research workflow with that topic and budget.
 
 When complete, post results back to the web dashboard:
 
-node ~/signal-scout-scripts/post-to-web.js "SESSION_ID" "FULL BRIEFING TEXT" SPENT_AMOUNT
+node ~/scripts/post-to-web.js "SESSION_ID" "FULL BRIEFING TEXT" SPENT_AMOUNT
 
 Example:
-node ~/signal-scout-scripts/post-to-web.js "cm5abc123def" "📡 Signal Scout Report..." 0.017
+node ~/scripts/post-to-web.js "cm5abc123def" "Signal Scout Report..." 0.017
 
 ALWAYS post results back for web requests. The user is waiting on the dashboard.
 
@@ -278,3 +278,11 @@ ALWAYS post results back for web requests. The user is waiting on the dashboard.
 | `scripts/locus-scrape.sh` | Full-page scrape via Firecrawl |
 | `scripts/locus-transactions.sh` | Transaction history |
 | `scripts/check-faithfulness.py` | RAG faithfulness checker (run before every delivery) |
+| `scripts/locus-perplexity.sh` | AI-synthesized research via Perplexity Sonar |
+| `scripts/locus-grok-xsearch.sh` | Live X/Twitter sentiment via Grok + X search |
+| `scripts/locus-crypto-data.sh` | Crypto price and sentiment via Alpha Vantage |
+| `scripts/locus-checkout-create.sh` | Create Locus checkout session (merchant mode) |
+| `scripts/locus-checkout-poll.sh` | Poll for checkout payment (merchant mode) |
+| `scripts/hash-briefing.js` | Generate consistent briefing hash for on-chain logging |
+| `scripts/log-to-chain.js` | Log briefing hash and spend to chain for immutable record |
+| `scripts/post-to-web.js` | Post briefing results back to web dashboard with session ID and spend amount |
