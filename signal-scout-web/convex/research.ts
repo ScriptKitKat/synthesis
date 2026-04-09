@@ -21,7 +21,7 @@ export const create = mutation({
     return await ctx.db.insert("research", {
       topic: args.topic,
       budget: args.budget,
-      status: "running",
+      status: "pending",
       createdAt: Date.now(),
     });
   },
