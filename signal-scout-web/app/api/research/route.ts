@@ -1,12 +1,11 @@
-// api/research/route.ts — FIXED
-
-import { prisma } from "@/lib/prisma";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
 import { NextRequest } from "next/server";
 
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
 export async function GET() {
-  const sessions = await prisma.research.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const sessions = await convex.query(api.research.list);
   return Response.json(sessions);
 }
 
@@ -18,42 +17,35 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: "topic and budget required" }, { status: 400 });
   }
 
-  const session = await prisma.research.create({
-    data: {
-      topic,
-      budget: parseFloat(budget),
-      status: "running",  // Start immediately
-      user: {
-        connectOrCreate: {
-          where: { email: "demo@signalscout.xyz" },
-          create: { email: "demo@signalscout.xyz", name: "Demo User" },
-        },
-      },
-    },
+  const id = await convex.mutation(api.research.create, {
+    topic,
+    budget: parseFloat(budget),
   });
 
-  // Still create checkout for payment (but don't block on it)
   const checkoutRes = await fetch(
     "https://beta-api.paywithlocus.com/api/checkout/sessions",
     {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.LOCUS_API_KEY}`,
+        Authorization: `Bearer ${process.env.LOCUS_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         amount: budget.toString(),
         description: `Signal Scout Research: ${topic}`,
-        metadata: { researchId: session.id },
+        metadata: { researchId: id },
       }),
     }
   );
 
   const checkout = await checkoutRes.json();
 
-  return Response.json({
-    id: session.id,
-    checkoutSessionId: checkout.data?.id,
-    checkoutUrl: checkout.data?.checkoutUrl,
-  }, { status: 201 });
+  return Response.json(
+    {
+      id,
+      checkoutSessionId: checkout.data?.id,
+      checkoutUrl: checkout.data?.checkoutUrl,
+    },
+    { status: 201 }
+  );
 }

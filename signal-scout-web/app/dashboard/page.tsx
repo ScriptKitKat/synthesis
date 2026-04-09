@@ -1,7 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Link from "next/link";
 
 function StatusIcon({ status }: { status: string }) {
   if (status === "complete") {
@@ -36,22 +37,24 @@ function StatusIcon({ status }: { status: string }) {
   );
 }
 
-export default async function Dashboard() {
-  const sessions = await prisma.research.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { user: true },
-  });
+export default function Dashboard() {
+  const sessions = useQuery(api.research.list);
 
-  const totalSpent = sessions.reduce((sum, s) => sum + (s.spent || 0), 0);
+  if (sessions === undefined) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-scout-muted font-mono text-sm animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  const totalSpent = sessions.reduce((sum, s) => sum + (s.spent ?? 0), 0);
   const completedCount = sessions.filter((s) => s.status === "complete").length;
-  const avgCost =
-    sessions.filter((s) => s.spent).length > 0
-      ? totalSpent / sessions.filter((s) => s.spent).length
-      : 0;
+  const sessionsWithSpend = sessions.filter((s) => s.spent);
+  const avgCost = sessionsWithSpend.length > 0 ? totalSpent / sessionsWithSpend.length : 0;
 
   return (
     <div className="min-h-screen">
-      {/* Page header */}
       <div className="border-b border-scout-border bg-scout-surface/30">
         <div className="max-w-6xl mx-auto px-6 py-10">
           <div className="flex items-end justify-between">
@@ -74,7 +77,6 @@ export default async function Dashboard() {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* Stats grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
             { label: "TOTAL SESSIONS", value: sessions.length, accent: false },
@@ -97,7 +99,6 @@ export default async function Dashboard() {
           ))}
         </div>
 
-        {/* Sessions list */}
         {sessions.length === 0 ? (
           <div className="bg-scout-surface border border-scout-border rounded-2xl p-16 text-center">
             <div className="w-16 h-16 rounded-2xl bg-scout-accent/10 border border-scout-accent/20 flex items-center justify-center mx-auto mb-6">
@@ -132,8 +133,8 @@ export default async function Dashboard() {
             <div className="space-y-2">
               {sessions.map((session) => (
                 <Link
-                  key={session.id}
-                  href={`/research/${session.id}`}
+                  key={session._id}
+                  href={`/research/${session._id}`}
                   className="group flex items-center justify-between bg-scout-surface border border-scout-border rounded-2xl p-5 hover:border-scout-accent/40 hover:bg-scout-surface/80 transition-all"
                 >
                   <div className="flex items-center gap-4">
@@ -160,11 +161,11 @@ export default async function Dashboard() {
                       <div className="text-xs font-mono text-scout-muted mb-0.5">BUDGET</div>
                       <div className="font-mono font-bold text-sm">${session.budget.toFixed(2)}</div>
                     </div>
-                    {session.spent !== null && (
+                    {session.spent != null && (
                       <div className="hidden md:block">
                         <div className="text-xs font-mono text-scout-muted mb-0.5">SPENT</div>
                         <div className="font-mono font-bold text-sm text-scout-accent">
-                          ${session.spent?.toFixed(3)}
+                          ${session.spent.toFixed(3)}
                         </div>
                       </div>
                     )}

@@ -1,23 +1,32 @@
-import { prisma } from "@/lib/prisma";
+"use client";
+
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 
-export const dynamic = "force-dynamic";
+export default function ResearchSession() {
+  const params = useParams();
+  const id = params.id as Id<"research">;
+  const session = useQuery(api.research.get, { id });
 
-export default async function ResearchSession({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const session = await prisma.research.findUnique({
-    where: { id: params.id },
-  });
+  if (session === undefined) {
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-12 flex items-center justify-center min-h-[60vh]">
+        <div className="text-scout-muted font-mono text-sm animate-pulse">Loading...</div>
+      </div>
+    );
+  }
 
-  if (!session) return notFound();
+  if (session === null) {
+    notFound();
+    return null;
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
-      {/* Header */}
       <div className="mb-8">
         <a
           href="/dashboard"
@@ -48,7 +57,6 @@ export default async function ResearchSession({
         </div>
       </div>
 
-      {/* Cost summary */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         <div className="bg-scout-surface border border-scout-border rounded-xl p-4">
           <div className="text-sm text-scout-muted mb-1">Budget</div>
@@ -59,20 +67,19 @@ export default async function ResearchSession({
         <div className="bg-scout-surface border border-scout-border rounded-xl p-4">
           <div className="text-sm text-scout-muted mb-1">Spent</div>
           <div className="text-xl font-mono font-bold text-scout-accent">
-            ${session.spent?.toFixed(3) || "—"}
+            {session.spent != null ? `$${session.spent.toFixed(3)}` : "—"}
           </div>
         </div>
         <div className="bg-scout-surface border border-scout-border rounded-xl p-4">
           <div className="text-sm text-scout-muted mb-1">Remaining</div>
           <div className="text-xl font-mono font-bold">
-            {session.spent
+            {session.spent != null
               ? `$${(session.budget - session.spent).toFixed(3)}`
               : "—"}
           </div>
         </div>
       </div>
 
-      {/* On-chain links */}
       {(session.txHash || session.chainTxHash) && (
         <div className="bg-scout-surface border border-scout-border rounded-xl p-4 mb-8 font-mono text-sm">
           <div className="text-scout-muted text-xs mb-2 uppercase tracking-wider">
@@ -100,7 +107,6 @@ export default async function ResearchSession({
         </div>
       )}
 
-      {/* Briefing */}
       {session.status === "running" && (
         <div className="bg-scout-surface border border-scout-border rounded-2xl p-12 text-center">
           <div className="text-4xl mb-4 animate-pulse">🔍</div>

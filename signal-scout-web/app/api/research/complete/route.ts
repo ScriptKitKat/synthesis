@@ -1,10 +1,12 @@
-import { prisma } from "@/lib/prisma";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { NextRequest } from "next/server";
 
-// POST /api/research/complete — agent posts results here when done
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
 export async function POST(req: NextRequest) {
   try {
-    // Simple auth: check a shared secret
     const authHeader = req.headers.get("authorization");
     const expectedSecret = process.env.AGENT_WEBHOOK_SECRET;
 
@@ -22,20 +24,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const session = await prisma.research.update({
-      where: { id },
-      data: {
-        status: "complete",
-        briefing,
-        spent: spent ? parseFloat(spent) : null,
-        txHash: txHash || null,
-        chainTxHash: chainTxHash || null,
-        sources: sources || null,
-        completedAt: new Date(),
-      },
+    await convex.mutation(api.research.complete, {
+      id: id as Id<"research">,
+      briefing,
+      spent: spent ? parseFloat(spent) : undefined,
+      txHash: txHash || undefined,
+      chainTxHash: chainTxHash || undefined,
+      sources: sources || undefined,
     });
 
-    return Response.json({ success: true, session });
+    return Response.json({ success: true });
   } catch (error) {
     console.error("Failed to complete research session:", error);
     return Response.json(

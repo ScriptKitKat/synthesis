@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ConvexClientProvider from "./ConvexClientProvider";
 
 export const metadata: Metadata = {
   title: "Signal Scout — Autonomous Crypto Research Agent",
@@ -43,7 +44,7 @@ export default function RootLayout({
             </a>
           </div>
         </nav>
-        <main>{children}</main>
+        <main><ConvexClientProvider>{children}</ConvexClientProvider></main>
       </body>
     </html>
   );
