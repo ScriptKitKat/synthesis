@@ -1,13 +1,15 @@
 {
-  "session_id": "solana-defi-2026-03-23",
-  "topic": "Solana DeFi",
+  "session_id": "ai-agent-tokens-2026-04-09",
+  "topic": "AI Agent Tokens",
   "budget_usdc": 0.10,
-  "spent_usdc": 0.021,
-  "remaining_usdc": 0.079,
+  "spent_usdc": 0.041,
+  "remaining_usdc": 0.059,
   "calls": [
-    {"action": "search", "cost": 0.007, "description": "Solana DeFi 2026 trends TVL protocols"},
-    {"action": "search", "cost": 0.007, "description": "Solana DeFi risks catalysts Jupiter Raydium 2026"},
-    {"action": "scrape", "cost": 0.007, "description": "solana.com/news/state-of-solana-february-2026"},
-    {"action": "scrape", "cost": 0.000, "description": "dextools.io roundup — failed, no charge"}
+    {"action": "crypto-price", "cost": 0.008, "description": "FET price via Alpha Vantage (API error, charged)"},
+    {"action": "crypto-sentiment", "cost": 0.008, "description": "blockchain/technology_sector sentiment"},
+    {"action": "perplexity", "cost": 0.00548, "description": "AI agent tokens 2026 broad landscape"},
+    {"action": "perplexity", "cost": 0.00572, "description": "AI agent tokens bearish risks 2026"},
+    {"action": "search", "cost": 0.007, "description": "AI agent tokens FET VIRTUAL AI16Z price market cap"},
+    {"action": "scrape", "cost": 0.007, "description": "levex.com AI16Z vs VIRTUAL vs FET comparison"}
   ]
 }

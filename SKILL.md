@@ -259,10 +259,10 @@ Run your normal research workflow with that topic and budget.
 
 When complete, post results back to the web dashboard:
 
-node ~/scripts/post-to-web.js "SESSION_ID" "FULL BRIEFING TEXT" SPENT_AMOUNT
+node ~/skills/signal-scout/scripts/post-to-web.js "SESSION_ID" "FULL BRIEFING TEXT" SPENT_AMOUNT
 
 Example:
-node ~/scripts/post-to-web.js "cm5abc123def" "Signal Scout Report..." 0.017
+node ~/skills/signal-scout/scripts/post-to-web.js "cm5abc123def" "Signal Scout Report..." 0.017
 
 ALWAYS post results back for web requests. The user is waiting on the dashboard.
 

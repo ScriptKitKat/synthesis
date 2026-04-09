@@ -1,3 +1,8 @@
 {
-  "sources": {}
+  "levex.com": {"score": 4, "quality": "high", "last_used": "2026-04-09", "notes": "Detailed market cap tables, competitive analysis, volatility data"},
+  "moonpay.com": {"score": 4, "quality": "high", "last_used": "2026-04-09", "notes": "Good agentic payments data"},
+  "news.bitcoin.com": {"score": 4, "quality": "high", "last_used": "2026-04-09", "notes": "Vitalik security warnings, specific stats"},
+  "barchart.com": {"score": 3, "quality": "medium", "last_used": "2026-04-09", "notes": "Market size forecasts"},
+  "kucoin.com": {"score": 3, "quality": "medium", "last_used": "2026-04-09", "notes": "AI token utility critique"},
+  "dextools.io": {"score": 1, "quality": "low", "last_used": "2026-03-23", "notes": "Scrape failed, no useful content"}
 }

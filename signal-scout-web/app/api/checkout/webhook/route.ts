@@ -54,9 +54,12 @@ export async function POST(req: NextRequest) {
         console.log(`Research ${researchId} → running. TX: ${txHash}`);
 
         try {
-          await fetch(process.env.DISCORD_WEBHOOK_URL!, {
+          await fetch(`https://discord.com/api/v10/channels/${process.env.DISCORD_CHANNEL_ID}/messages`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+            },
             body: JSON.stringify({
               content: [
                 `**RESEARCH REQUEST**`,
