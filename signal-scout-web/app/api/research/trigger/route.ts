@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
         ``,
         `Run your research workflow for this topic.`,
         `When complete, post results using:`,
-        `node ~/signal-scout-scripts/post-to-web.js "${id}" "BRIEFING_TEXT" SPENT_AMOUNT`,
+        `node ~/scripts/post-to-web.js "${id}" "BRIEFING_TEXT" SPENT_AMOUNT`,
       ].join("\n"),
     }),
   });
